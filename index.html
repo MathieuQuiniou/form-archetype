@@ -4,591 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Découvrez l'archétype de votre enfant - eddmon</title>
-    <style>
-        /* RESET & VARIABLES */
-        :root {
-            --white: #FFFFFF;
-            --grey: #F5F5F5;
-            --blue: #0055A4;
-            --orange: #FFA500;
-            --error: #D9534F;
-            --shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-            --border-radius: 8px;
-            --transition: all 0.2s ease;
-            --padding: 12px;
-            --margin-bottom: 20px;
-        }
+<style>
+  :root {
+    --primary: #0055A4;
+    --accent: #FFA500;
+    --bg: #f5f5f5;
+    --card-bg: #fff;
+    --shadow: rgba(0,0,0,0.1);
+    --duration: 0.4s;
+  }
+  * { box‐sizing: border‐box; }
+  body { margin:0; font-family: 'Lato', sans‐serif; background: var(--bg); }
+  .container { background: var(--card-bg); border-radius:12px; box-shadow:0 8px 24px var(--shadow); overflow:hidden; max-width:600px; margin:40px auto; position:relative; }
+
+  /* Progress bar */
+  .progress { display:flex; align-items:center; padding:16px; }
+  .progress-info { font-size:14px; color:var(--primary); }
+  .progress-bar { flex:1; height:6px; background:#e0e0e0; border-radius:3px; margin:0 12px; overflow:hidden; }
+  .progress-step { width:calc((100%/5)*var(--step)); height:100%; background:var(--accent); transition:width var(--duration) ease; }
+
+  /* Steps */
+  .form-step { display:none; padding:40px; text-align:center; animation:fadeIn var(--duration) ease; }
+  .form-step.active { display:block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)} }
+
+  /* Inputs */
+  .form-group { margin-bottom:24px; text-align:left; }
+  label { display:block; margin-bottom:8px; color:#333; }
+  input, select, textarea { width:100%; padding:12px; border:1px solid #ccc; border-radius:8px; transition:border-color var(--duration),box-shadow var(--duration); }
+  input:focus, select:focus, textarea:focus { border-color:var(--primary); box-shadow:0 0 0 4px rgba(0,85,164,0.15); outline:none; }
+
+  /* Card selections */
+  .card-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+  .selection-card { background:var(--card-bg); border:2px solid #eee; border-radius:8px; padding:16px; cursor:pointer; position:relative; transition:border-color var(--duration),transform var(--duration),box-shadow var(--duration); }
+  .selection-card:hover { border-color:var(--primary); transform:translateY(-4px); box-shadow:0 4px 16px var(--shadow); }
+  .selection-card.selected { border-color:var(--accent); background:rgba(255,165,0,0.1); }
+  .checkmark { position:absolute; top:12px; right:12px; width:20px; height:20px; background:var(--accent); border-radius:50%; display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;opacity:0;transition:opacity var(--duration); }
+  .selection-card.selected .checkmark { opacity:1; }
+
+  /* Buttons */
+  .btn-container { display:flex; justify-content:space-between; margin-top:32px; }
+  .btn { flex:1; padding:12px; border:none; border-radius:8px; font-size:16px; cursor:pointer; transition:background var(--duration),transform var(--duration); }
+  .btn + .btn { margin-left:16px; }
+  .btn-primary { background:var(--primary); color:#fff; }
+  .btn-primary:hover { background:var(--accent); transform:translateY(-2px); }
+  .btn-secondary { background:#ddd; color:#333; }
+  .btn-secondary:hover { background:#ccc; }
+
+  /* Loader */
+  #loader-overlay { position:absolute; inset:0; background:rgba(255,255,255,0.8); display:none; align-items:center; justify-content:center; }
+  .spinner { width:48px; height:48px; border:6px solid #eee; border-top-color:var(--primary); border-radius:50%; animation:spin 1s linear infinite; }
+  @keyframes spin { to{transform:rotate(360deg)} }
+
+  /* Popup */
+  .popup-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.6); display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity var(--duration),visibility var(--duration); }
+  .popup-overlay.active { opacity:1; visibility:visible; }
+  .popup-content { position:relative; background:#fff; border-radius:12px; padding:32px; width:80%;max-width:400px; text-align:center; box-shadow:0 8px 24px var(--shadow); animation:fadeIn var(--duration) ease; }
+  .popup-close { position:absolute; top:12px; right:12px; background:none; border:none; font-size:24px; cursor:pointer; color:var(--primary); }
+  .popup-close:hover { color:var(--accent); }
+  .popup-icon { font-size:60px; color:var(--accent); margin-bottom:16px; }
+  .popup-content h1 { color:var(--accent); margin-bottom:8px; }
+</style>
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Lato', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: var(--grey);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            font-size: 16px;
-            line-height: 1.5;
-            color: #333;
-        }
-
-        /* TYPOGRAPHY */
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-weight: 600;
-        }
-
-        h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
-            color: var(--blue);
-        }
-
-        p {
-            margin-bottom: var(--margin-bottom);
-        }
-
-        /* CONTAINER & LAYOUT */
-        .container {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background-color: var(--white);
-            border-bottom: 1px solid var(--grey);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        .logo {
-            height: 40px;
-            display: flex;
-            align-items: center;
-        }
-
-        .logo img {
-            height: 100%;
-        }
-
-        .progress-container {
-            flex: 1;
-            margin: 0 20px;
-            height: 10px;
-            border-radius: 10px;
-            background-color: var(--grey);
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--blue) 0%, var(--orange) 100%);
-            transition: width 0.3s ease;
-            border-radius: 10px;
-        }
-
-        .progress-info {
-            font-size: 14px;
-            font-weight: bold;
-            color: var(--blue);
-            min-width: 40px;
-            text-align: right;
-        }
-
-        /* FORM ELEMENTS */
-        .form-container {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .form-step {
-            padding: 30px 20px;
-            display: none;
-            opacity: 0;
-            transform: translateX(50px);
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-
-        .form-step.active {
-            display: block;
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .step-title {
-            margin-bottom: 20px;
-            color: var(--blue);
-        }
-
-        .form-group {
-            margin-bottom: var(--margin-bottom);
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"],
-        input[type="number"],
-        select,
-        textarea {
-            width: 100%;
-            padding: var(--padding);
-            border: 1px solid #ddd;
-            border-radius: var(--border-radius);
-            font-size: 16px;
-            transition: var(--transition);
-        }
-
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="tel"]:focus,
-        input[type="number"]:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: var(--blue);
-            box-shadow: 0 0 0 3px rgba(0, 85, 164, 0.1);
-        }
-
-        textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        .input-error {
-            border-color: var(--error) !important;
-        }
-
-        .error-message {
-            color: var(--error);
-            font-size: 14px;
-            margin-top: 5px;
-            display: none;
-        }
-
-        /* BUTTONS */
-        .btn-container {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: var(--border-radius);
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .btn-primary {
-            background: linear-gradient(90deg, var(--blue) 0%, var(--orange) 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn-secondary {
-            background-color: var(--grey);
-            color: #666;
-        }
-
-        .btn-secondary:hover {
-            background-color: #e5e5e5;
-        }
-
-        /* CARD SELECTIONS */
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: var(--margin-bottom);
-        }
-
-        .selection-card {
-            background-color: var(--white);
-            border: 2px solid var(--grey);
-            border-radius: var(--border-radius);
-            padding: 15px;
-            cursor: pointer;
-            transition: var(--transition);
-            text-align: center;
-            position: relative;
-        }
-
-        .selection-card:hover {
-            border-color: var(--blue);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-
-        .selection-card.selected {
-            border-color: var(--blue);
-            background-color: rgba(0, 85, 164, 0.05);
-        }
-
-        .selection-card .checkmark {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background-color: var(--blue);
-            color: white;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
-
-        .selection-card.selected .checkmark {
-            display: flex;
-        }
-
-        .limit-text {
-            margin-top: 15px;
-            font-size: 14px;
-            color: #666;
-            font-style: italic;
-        }
-
-        /* TESTIMONIALS */
-        .testimonials {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid var(--grey);
-        }
-
-        .testimonial-carousel {
-            position: relative;
-            padding: 15px 0;
-        }
-
-        .testimonial-slide {
-            display: none;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            text-align: center;
-        }
-
-        .testimonial-slide.active {
-            display: block;
-            opacity: 1;
-        }
-
-        .testimonial-content {
-            font-style: italic;
-            margin-bottom: 10px;
-        }
-
-        .testimonial-author {
-            font-weight: 600;
-            color: var(--blue);
-        }
-
-        /* VALIDATION */
-        .validation-icon {
-            display: inline-block;
-            margin-left: 10px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .validation-icon.visible {
-            opacity: 1;
-        }
-
-        /* FAQ */
-        .faq-section {
-            margin-top: 30px;
-        }
-
-        .faq-item {
-            margin-bottom: 10px;
-            border: 1px solid var(--grey);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-        }
-
-        .faq-question {
-            padding: 15px;
-            background-color: var(--grey);
-            cursor: pointer;
-            position: relative;
-            font-weight: 500;
-        }
-
-        .faq-question::after {
-            content: '+';
-            position: absolute;
-            right: 15px;
-            transition: transform 0.3s ease;
-        }
-
-        .faq-item.active .faq-question::after {
-            transform: rotate(45deg);
-        }
-
-        .faq-answer {
-            padding: 0 15px;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease, padding 0.3s ease;
-        }
-
-        .faq-item.active .faq-answer {
-            padding: 15px;
-            max-height: 500px;
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-
-            .card-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .btn-container {
-                flex-direction: column-reverse;
-                gap: 10px;
-            }
-
-            .btn {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header {
-                padding: 10px;
-            }
-
-            .logo {
-                height: 30px;
-            }
-
-            .form-step {
-                padding: 20px 15px;
-            }
-
-            h1 {
-                font-size: 20px;
-            }
-
-            .card-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* SUCCESS MESSAGE */
-        .success-message {
-            display: none;
-            text-align: center;
-            padding: 30px 20px;
-        }
-
-        .success-icon {
-            font-size: 60px;
-            color: var(--blue);
-            margin-bottom: 20px;
-        }
-
-        /* CUSTOM CHECKBOX */
-        .custom-checkbox {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: var(--margin-bottom);
-        }
-
-        .custom-checkbox input {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-            height: 0;
-            width: 0;
-        }
-
-        .checkmark-box {
-            min-width: 20px;
-            height: 20px;
-            background-color: var(--white);
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-right: 10px;
-            margin-top: 3px;
-            position: relative;
-        }
-
-        .custom-checkbox input:checked ~ .checkmark-box {
-            background-color: var(--blue);
-            border-color: var(--blue);
-        }
-
-        .checkmark-box:after {
-            content: "";
-            position: absolute;
-            display: none;
-            left: 6px;
-            top: 2px;
-            width: 5px;
-            height: 10px;
-            border: solid white;
-            border-width: 0 2px 2px 0;
-            transform: rotate(45deg);
-        }
-
-        .custom-checkbox input:checked ~ .checkmark-box:after {
-            display: block;
-        }
-
-        .custom-checkbox-label {
-            font-size: 14px;
-        }
-
-        /* ANIMATIONS */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.5s ease forwards;
-        }
-
-        /* VALIDATION EFFECT */
-        @keyframes validationPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        .validation-success {
-            animation: validationPulse 0.3s ease;
-            color: #28a745;
-        }
-
-        /* POPUP CONFIRMATION */
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .popup-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .popup-content {
-            background-color: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-            padding: 40px;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-            position: relative;
-            transform: translateY(20px);
-            opacity: 0;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-        }
-
-        .popup-overlay.active .popup-content {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .popup-icon {
-            font-size: 60px;
-            color: var(--blue);
-            margin-bottom: 20px;
-            display: inline-block;
-        }
-
-        @keyframes checkmark {
-            0% {
-                stroke-dashoffset: 100;
-            }
-            100% {
-                stroke-dashoffset: 0;
-            }
-        }
-
-        .checkmark-circle {
-            stroke-dasharray: 100;
-            stroke-dashoffset: 100;
-            animation: checkmark 1s ease-in-out forwards;
-        }
-        @keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* Popup vert “succès” */
-.popup-overlay.success .popup-content {
-  border: 3px solid #28a745;
-  background-color: #f0fff0;
-}
-.popup-overlay.success .popup-icon {
-  color: #28a745;
-}
-.popup-overlay.success h1 {
-  color: #28a745;
-}
-.popup-close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: var(--blue);
-}
-.popup-close:hover {
-  color: var(--orange);
-}
-
-    </style>
 </head>
 <body>
     <div class="container">
@@ -612,20 +89,24 @@
   "></div>
 </div>
 
-        <div class="header">
-            <div class="logo">
-                <svg width="100" height="40" viewBox="0 0 100 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M15 10h70v5H15z" fill="#0055A4"/>
-                    <path d="M15 17h70v5H15z" fill="#FFA500"/>
-                    <path d="M15 24h70v5H15z" fill="#0055A4"/>
-                    <text x="20" y="32" font-family="Montserrat" font-weight="bold" font-size="14" fill="#0055A4">eddmon</text>
-                </svg>
-            </div>
-            <div class="progress-container">
-                <div class="progress-bar" id="progress-bar"></div>
-            </div>
-            <div class="progress-info" id="progress-info">0%</div>
-        </div>
+<div class="header">
+  <div class="logo">
+    <svg width="100" height="40" viewBox="0 0 100 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15 10h70v5H15z" fill="#0055A4"/>
+      <path d="M15 17h70v5H15z" fill="#FFA500"/>
+      <path d="M15 24h70v5H15z" fill="#0055A4"/>
+      <text x="20" y="32" font-family="Montserrat" font-weight="bold" font-size="14" fill="#0055A4">eddmon</text>
+    </svg>
+  </div>
+  <div class="progress" style="--step:1;">
+    <span class="progress-info">Étape 1 sur 6</span>
+    <div class="progress-bar">
+      <div class="progress-step"></div>
+    </div>
+    <span></span>
+  </div>
+</div>
+
 
         <div class="form-container">
             <form id="archetype-form" action="https://hooks.airtable.com/workflows/v1/genericWebhook/appJ34INj8TdrYu22/wflNOheIY5qy3BTXs/wtre55dFMBT6pcgyZ" method="post" target="hidden_iframe">
@@ -1070,21 +551,30 @@
             <iframe name="hidden_iframe" style="display:none;"></iframe>
         </div>
     </div>
-    <!-- Popup de confirmation -->
-    <div class="popup-overlay" id="confirmation-popup">
-        <div class="popup-content">
-            <button class="popup-close" aria-label="Fermer">&times;</button>
-            <div class="popup-icon">
-                <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="40" cy="40" r="38" stroke="#0055A4" stroke-width="4" class="checkmark-circle"/>
-                    <path d="M25 40L35 50L55 30" stroke="#0055A4" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="checkmark-circle"/>
-                </svg>
-            </div>
-            <h1>Merci pour votre confiance !</h1>
-            <p>Nous analysons actuellement le profil de <span class="child-name-display"></span> et vous enverrons très prochainement son archétype complet ainsi que nos recommandations personnalisées pour l'accompagner vers la réussite.</p>
-            <p style="margin-top: 20px;">Vous recevrez un email à l'adresse <span id="email-display"></span> dans les prochaines 24 à 48 heures.</p>
-        </div>
+<!-- Popup de confirmation -->
+<div class="popup-overlay" id="confirmation-popup">
+  <div class="popup-content success">
+    <button class="popup-close" aria-label="Fermer">&times;</button>
+    <div class="popup-icon">
+      <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="40" cy="40" r="38" stroke="#28a745" stroke-width="4" class="checkmark-circle"/>
+        <path d="M25 40L35 50L55 30" stroke="#28a745" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="checkmark-circle"/>
+      </svg>
     </div>
+    <h1>Merci pour votre confiance&nbsp;!</h1>
+    <p>
+      Nous analysons actuellement le profil de 
+      <strong><span class="child-name-display"></span></strong> 
+      et vous enverrons très prochainement son archétype complet ainsi que nos recommandations personnalisées pour l’accompagner vers la réussite.
+    </p>
+    <p style="margin-top: 20px;">
+      Vous recevrez un email à l’adresse 
+      <strong><span id="email-display"></span></strong> 
+      dans les prochaines 24 à 48 heures.
+    </p>
+  </div>
+</div>
+
 
 <script>
     // Croix pour fermer le popup manuellement
