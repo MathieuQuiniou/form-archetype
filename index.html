@@ -613,6 +613,14 @@
 </div>
 
         <div class="header">
+            <div class="logo">
+                <svg width="100" height="40" viewBox="0 0 100 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 10h70v5H15z" fill="#0055A4"/>
+                    <path d="M15 17h70v5H15z" fill="#FFA500"/>
+                    <path d="M15 24h70v5H15z" fill="#0055A4"/>
+                    <text x="20" y="32" font-family="Montserrat" font-weight="bold" font-size="14" fill="#0055A4">eddmon</text>
+                </svg>
+            </div>
             <div class="progress-container">
                 <div class="progress-bar" id="progress-bar"></div>
             </div>
@@ -1065,7 +1073,7 @@
     <!-- Popup de confirmation -->
     <div class="popup-overlay" id="confirmation-popup">
         <div class="popup-content">
-            <button class="popup-close" aria-label="Fermer">&times;</button>
+<button class="popup-close" aria-label="Fermer">&times;</button>
             <div class="popup-icon">
                 <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="40" cy="40" r="38" stroke="#0055A4" stroke-width="4" class="checkmark-circle"/>
@@ -1079,11 +1087,13 @@
     </div>
 
 <script>
-    // Croix pour fermer le popup manuellement
+
+// Croix pour fermer le popup manuellement
 document.querySelector('.popup-close').addEventListener('click', () => {
   const pop = document.getElementById('confirmation-popup');
   pop.classList.remove('active', 'success');
 });
+
 
 document.addEventListener('DOMContentLoaded', function() {
   const steps = Array.from(document.querySelectorAll('.form-step'));
@@ -1128,7 +1138,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!name) { showError('child-name','Indiquez le prénom'); ok = false; }
       else {
         hideError('child-name');
-        document.getElementById('dynamic-title').textContent = Découvrez l'archétype de ${name};
+        document.getElementById('dynamic-title').textContent = `Découvrez l'archétype de ${name}`;
         document.querySelectorAll('.child-name-display').forEach(el => el.textContent = name);
       }
       const lvl = document.getElementById('child-school-level').value;
