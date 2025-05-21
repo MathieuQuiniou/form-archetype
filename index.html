@@ -1126,16 +1126,19 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Boutons “Suivant”
+// Boutons “Suivant”
 document.querySelectorAll('button.btn-primary[id^="next-"]').forEach(btn => {
   btn.addEventListener('click', () => {
-    const nextIndex = current + 1;
-    // si on est à l'étape 1 (current===0), on skip la validation
-    if ((current === 0 || validateStep(nextIndex)) && current < steps.length - 1) {
-      current++;
-      updateWizard();
+    // on valide l'étape en cours (sauf pour l'étape 1)
+    if (current === 0 || validateStep(current)) {
+      if (current < steps.length - 1) {
+        current++;
+        updateWizard();
+      }
     }
   });
 });
+
 
   // Boutons “Précédent”
   document.querySelectorAll('button.btn-secondary.prev-btn').forEach(btn => {
