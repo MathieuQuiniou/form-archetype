@@ -579,7 +579,7 @@
         </div>
 
         <div class="form-container">
-            <form id="archetype-form">
+            + <form id="archetype-form" action="https://hooks.airtable.com/workflows/v1/genericWebhook/appJ34INj8TdrYu22/wflCnHSeM0hhnMRFJ/wtr3EvRbAwKPJnegg" method="post" target="hidden_iframe">
                 <!-- Étape 1 - Introduction & Confiance -->
                 <div class="form-step active" id="step-1">
                     <h1 id="dynamic-title">Découvrez l'archétype de votre enfant</h1>
@@ -1018,9 +1018,9 @@
                     </div>
                 </div>
             </form>
+            <iframe name="hidden_iframe" style="display:none;"></iframe>
         </div>
     </div>
-
     <!-- Popup de confirmation -->
     <div class="popup-overlay" id="confirmation-popup">
         <div class="popup-content">
@@ -1184,27 +1184,20 @@ document.querySelectorAll('button.btn-primary[id^="next-"]').forEach(btn => {
   setupSelectionCards('urgency-grid','urgency');
 
   // Soumission + webhook + popup
-  form.addEventListener('submit', function(e) {
+    // Au lieu de ton form.addEventListener('submit', …) actuel, mets :
+form.addEventListener('submit', function(e) {
+  // Si validation KO, on bloque la soumission :
+  if (!validateStep(steps.length - 1)) {
     e.preventDefault();
-    if (!validateStep(5)) return;
-    const data = {};
-    new FormData(form).forEach((v,k) => data[k] = v);
-fetch(webhookUrl, {
-  method: 'POST',
-  mode: 'no-cors',              // ← ajoute ça pour forcer l’envoi malgré l’absence de CORS
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(data)
-})
-.then(() => console.log('Données envoyées à Airtable'))
-.catch(err => console.error('Erreur envoi webhook :', err));
-
-    document.querySelector('.container').style.display = 'none';
-    const pop = document.getElementById('confirmation-popup');
-    pop.classList.add('active');
-    setTimeout(() => pop.classList.remove('active'), 3000);
-  });
+    return;
+  }
+  // Sinon on laisse le navigateur poster la form dans l'iframe,
+  // et on affiche la popup :
+  const pop = document.getElementById('confirmation-popup');
+  pop.classList.add('active');
+  // on garde l'iframe cachée, donc la page principale ne bouge pas
+  setTimeout(() => pop.classList.remove('active'), 3000);
+});
 
   // FAQ toggle
   document.querySelectorAll('.faq-question').forEach(q =>
