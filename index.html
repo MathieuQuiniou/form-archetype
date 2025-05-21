@@ -1219,35 +1219,28 @@ document.querySelectorAll('button.btn-primary[id^="next-"]').forEach(btn => {
   setupSelectionCards('objective-grid','objective');
   setupSelectionCards('urgency-grid','urgency');
 
-  // Soumission + webhook + popup
+// Soumission native → hidden_iframe
 form.addEventListener('submit', function(e) {
-  e.preventDefault();
-  // Validation finale
-  if (!validateStep(steps.length - 1)) return;
-
-  // Affiche loader, masque formulaire
+  // 1) validation finale
+  if (!validateStep(steps.length - 1)) {
+    e.preventDefault();
+    return;
+  }
+  // 2) loader + masque formulaire
   document.getElementById('loader-overlay').style.display = 'flex';
   document.querySelector('.container').style.display = 'none';
+  // 3) on NE fait PAS de fetch ici : le navigateur POSTERA automatiquement dans l'iframe
+});
 
-  // Envoi via fetch no-cors
-  const payload = Object.fromEntries(new FormData(form).entries());
-  fetch(webhookUrl, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  })
-  .then(() => {
-    // Masque loader, affiche popup vert
+// Quand l'iframe se charge, on cache le loader et on déclenche le popup vert
+document
+  .querySelector('iframe[name="hidden_iframe"]')
+  .addEventListener('load', function() {
     document.getElementById('loader-overlay').style.display = 'none';
     const pop = document.getElementById('confirmation-popup');
     pop.classList.add('active', 'success');
-  })
-  .catch(() => {
-    document.getElementById('loader-overlay').style.display = 'none';
-    alert("Une erreur est survenue, veuillez réessayer.");
   });
-});
+
 
 
   // FAQ toggle
