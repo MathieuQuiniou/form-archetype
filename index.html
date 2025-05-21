@@ -574,6 +574,19 @@
 .popup-overlay.success h1 {
   color: #28a745;
 }
+.popup-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--blue);
+}
+.popup-close:hover {
+  color: var(--orange);
+}
 
     </style>
 </head>
@@ -1060,6 +1073,7 @@
     <!-- Popup de confirmation -->
     <div class="popup-overlay" id="confirmation-popup">
         <div class="popup-content">
+            <button class="popup-close" aria-label="Fermer">&times;</button>
             <div class="popup-icon">
                 <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="40" cy="40" r="38" stroke="#0055A4" stroke-width="4" class="checkmark-circle"/>
@@ -1073,6 +1087,12 @@
     </div>
 
 <script>
+    // Croix pour fermer le popup manuellement
+document.querySelector('.popup-close').addEventListener('click', () => {
+  const pop = document.getElementById('confirmation-popup');
+  pop.classList.remove('active', 'success');
+});
+
 document.addEventListener('DOMContentLoaded', function() {
   const steps = Array.from(document.querySelectorAll('.form-step'));
   let current = 0;
