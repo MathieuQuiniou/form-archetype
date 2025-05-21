@@ -1,192 +1,1213 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Découvrez l'archétype de votre enfant</title>
-  <style>
-    body{font-family:sans-serif;background:#f5f5f5;padding:20px}
-    .form-step{display:none;background:#fff;padding:20px;margin-bottom:10px;border-radius:8px;box-shadow:0 2px 5px rgba(0,0,0,0.1)}
-    .form-step.active{display:block}
-    .btn{padding:10px 20px;border:none;border-radius:5px;cursor:pointer;margin:5px}
-    .btn-primary{background:#0055A4;color:#fff}
-    .btn-secondary{background:#ccc;color:#333}
-    .error{color:#D9534F;font-size:0.9em;display:none;margin-top:5px}
-    .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;margin-bottom:10px}
-    .selection-card{border:1px solid #ddd;border-radius:5px;padding:10px;text-align:center;cursor:pointer}
-    .selection-card.selected{border-color:#0055A4;background:rgba(0,85,164,0.1)}
-    .faq-item{margin-bottom:10px}
-    .faq-question{background:#eee;padding:10px;cursor:pointer;border-radius:5px}
-    .faq-answer{display:none;padding:10px;border-left:3px solid #0055A4;background:#fff}
-    .faq-item.active .faq-answer{display:block}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Découvrez l'archétype de votre enfant - eddmon</title>
+    <style>
+        /* RESET & VARIABLES */
+        :root {
+            --white: #FFFFFF;
+            --grey: #F5F5F5;
+            --blue: #0055A4;
+            --orange: #FFA500;
+            --error: #D9534F;
+            --shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            --border-radius: 8px;
+            --transition: all 0.2s ease;
+            --padding: 12px;
+            --margin-bottom: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Lato', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--grey);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        /* TYPOGRAPHY */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: var(--blue);
+        }
+
+        p {
+            margin-bottom: var(--margin-bottom);
+        }
+
+        /* CONTAINER & LAYOUT */
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: var(--white);
+            border-bottom: 1px solid var(--grey);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            height: 40px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 100%;
+        }
+
+        .progress-container {
+            flex: 1;
+            margin: 0 20px;
+            height: 10px;
+            border-radius: 10px;
+            background-color: var(--grey);
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--blue) 0%, var(--orange) 100%);
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .progress-info {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--blue);
+            min-width: 40px;
+            text-align: right;
+        }
+
+        /* FORM ELEMENTS */
+        .form-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-step {
+            padding: 30px 20px;
+            display: none;
+            opacity: 0;
+            transform: translateX(50px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .form-step.active {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .step-title {
+            margin-bottom: 20px;
+            color: var(--blue);
+        }
+
+        .form-group {
+            margin-bottom: var(--margin-bottom);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: var(--padding);
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(0, 85, 164, 0.1);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .input-error {
+            border-color: var(--error) !important;
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* BUTTONS */
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--blue) 0%, var(--orange) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary {
+            background-color: var(--grey);
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e5e5e5;
+        }
+
+        /* CARD SELECTIONS */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: var(--margin-bottom);
+        }
+
+        .selection-card {
+            background-color: var(--white);
+            border: 2px solid var(--grey);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            position: relative;
+        }
+
+        .selection-card:hover {
+            border-color: var(--blue);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .selection-card.selected {
+            border-color: var(--blue);
+            background-color: rgba(0, 85, 164, 0.05);
+        }
+
+        .selection-card .checkmark {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--blue);
+            color: white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .selection-card.selected .checkmark {
+            display: flex;
+        }
+
+        .limit-text {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* TESTIMONIALS */
+        .testimonials {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--grey);
+        }
+
+        .testimonial-carousel {
+            position: relative;
+            padding: 15px 0;
+        }
+
+        .testimonial-slide {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            text-align: center;
+        }
+
+        .testimonial-slide.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .testimonial-content {
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            color: var(--blue);
+        }
+
+        /* VALIDATION */
+        .validation-icon {
+            display: inline-block;
+            margin-left: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .validation-icon.visible {
+            opacity: 1;
+        }
+
+        /* FAQ */
+        .faq-section {
+            margin-top: 30px;
+        }
+
+        .faq-item {
+            margin-bottom: 10px;
+            border: 1px solid var(--grey);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 15px;
+            background-color: var(--grey);
+            cursor: pointer;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .faq-question::after {
+            content: '+';
+            position: absolute;
+            right: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-question::after {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            padding: 0 15px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            padding: 15px;
+            max-height: 500px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .card-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .btn-container {
+                flex-direction: column-reverse;
+                gap: 10px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 10px;
+            }
+
+            .logo {
+                height: 30px;
+            }
+
+            .form-step {
+                padding: 20px 15px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* SUCCESS MESSAGE */
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .success-icon {
+            font-size: 60px;
+            color: var(--blue);
+            margin-bottom: 20px;
+        }
+
+        /* CUSTOM CHECKBOX */
+        .custom-checkbox {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: var(--margin-bottom);
+        }
+
+        .custom-checkbox input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark-box {
+            min-width: 20px;
+            height: 20px;
+            background-color: var(--white);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+            margin-top: 3px;
+            position: relative;
+        }
+
+        .custom-checkbox input:checked ~ .checkmark-box {
+            background-color: var(--blue);
+            border-color: var(--blue);
+        }
+
+        .checkmark-box:after {
+            content: "";
+            position: absolute;
+            display: none;
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .custom-checkbox input:checked ~ .checkmark-box:after {
+            display: block;
+        }
+
+        .custom-checkbox-label {
+            font-size: 14px;
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* VALIDATION EFFECT */
+        @keyframes validationPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .validation-success {
+            animation: validationPulse 0.3s ease;
+            color: #28a745;
+        }
+
+        /* POPUP CONFIRMATION */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup-content {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .popup-overlay.active .popup-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .popup-icon {
+            font-size: 60px;
+            color: var(--blue);
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        @keyframes checkmark {
+            0% {
+                stroke-dashoffset: 100;
+            }
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .checkmark-circle {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: checkmark 1s ease-in-out forwards;
+        }
+    </style>
 </head>
 <body>
-  <h1>Découvrez l'archétype de votre enfant</h1>
-  <div id="progress" style="margin-bottom:20px">
-    <div style="background:#ddd;height:10px;border-radius:5px;overflow:hidden">
-      <div id="progress-bar" style="height:10px;width:0%;background:#0055A4"></div>
-    </div>
-    <div id="progress-info" style="text-align:right;font-weight:bold">0%</div>
-  </div>
-  <form id="archetype-form">
-    <!-- Étape 1 -->
-    <div class="form-step active" data-step="1">
-      <p>Bienvenue ! Prêt à découvrir l'archétype de votre enfant ?</p>
-      <button type="button" class="btn btn-primary" id="next-1">Commencer</button>
-    </div>
-    <!-- Étape 2 -->
-    <div class="form-step" data-step="2">
-      <label>Prénom de l'enfant:<br>
-        <input type="text" id="child-name" name="child-name" required>
-      </label>
-      <div class="error" id="child-name-error">Requis</div>
-      <label>Niveau scolaire:<br>
-        <select id="child-school-level" name="child-school-level" required>
-          <option value="">--</option>
-          <option value="primaire-cp">CP</option>
-          <option value="primaire-ce1">CE1</option>
-          <!-- Ajoute les autres options -->
-        </select>
-      </label>
-      <div class="error" id="child-school-level-error">Requis</div>
-      <button type="button" class="btn btn-secondary prev-btn">Précédent</button>
-      <button type="button" class="btn btn-primary" id="next-2">Suivant</button>
-    </div>
-    <!-- Étape 3 -->
-    <div class="form-step" data-step="3">
-      <p>Sélectionnez jusqu'à 4 qualités :</p>
-      <div class="card-grid" id="strengths-grid">
-        <div class="selection-card" data-value="Curieux">Curieux</div>
-        <div class="selection-card" data-value="Créatif">Créatif</div>
-        <div class="selection-card" data-value="Organisé">Organisé</div>
-        <div class="selection-card" data-value="Persévérant">Persévérant</div>
-      </div>
-      <input type="hidden" id="strengths" name="strengths" required>
-      <div class="error" id="strengths-error">Sélectionnez au moins 1 qualité</div>
-      <button type="button" class="btn btn-secondary prev-btn">Précédent</button>
-      <button type="button" class="btn btn-primary" id="next-3">Suivant</button>
-    </div>
-    <!-- Étape 4 -->
-    <div class="form-step" data-step="4">
-      <p>Sélectionnez votre style d'apprentissage :</p>
-      <div class="card-grid" id="learning-style-grid">
-        <div class="selection-card" data-value="Visuel">Visuel</div>
-        <div class="selection-card" data-value="Auditif">Auditif</div>
-        <div class="selection-card" data-value="Kinesthésique">Kinesthésique</div>
-      </div>
-      <input type="hidden" id="learning-style" name="learning-style" required>
-      <div class="error" id="learning-style-error">Sélectionnez un style</div>
-      <button type="button" class="btn btn-secondary prev-btn">Précédent</button>
-      <button type="button" class="btn btn-primary" id="next-4">Suivant</button>
-    </div>
-    <!-- Étape 5 -->
-    <div class="form-step" data-step="5">
-      <p>Budget et localisation :</p>
-      <label>Budget:<br>
-        <select id="budget" name="budget" required>
-          <option value="">--</option>
-          <option value="100-200">100-200€</option>
-        </select>
-      </label>
-      <div class="error" id="budget-error">Requis</div>
-      <label>Zone géographique:<br>
-        <input type="text" id="location" name="location" required>
-      </label>
-      <div class="error" id="location-error">Requis</div>
-      <button type="button" class="btn btn-secondary prev-btn">Précédent</button>
-      <button type="button" class="btn btn-primary" id="next-5">Suivant</button>
-    </div>
-    <!-- Étape 6 -->
-    <div class="form-step" data-step="6">
-      <p>Vos coordonnées :</p>
-      <label>Email:<br>
-        <input type="email" id="parent-email" name="parent-email" required>
-      </label>
-      <div class="error" id="parent-email-error">Invalide</div>
-      <label>
-        <input type="checkbox" id="rgpd-consent" name="rgpd-consent" required>
-        J'accepte...
-      </label>
-      <div class="error" id="rgpd-consent-error">Requis</div>
-      <button type="button" class="btn btn-secondary prev-btn">Précédent</button>
-      <button type="submit" class="btn btn-primary">Envoyer</button>
-    </div>
-  </form>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <svg width="100" height="40" viewBox="0 0 100 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 10h70v5H15z" fill="#0055A4"/>
+                    <path d="M15 17h70v5H15z" fill="#FFA500"/>
+                    <path d="M15 24h70v5H15z" fill="#0055A4"/>
+                    <text x="20" y="32" font-family="Montserrat" font-weight="bold" font-size="14" fill="#0055A4">eddmon</text>
+                </svg>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div class="progress-info" id="progress-info">0%</div>
+        </div>
 
-  <h2>FAQ</h2>
-  <div class="faq-item">
-    <div class="faq-question">Comment ça marche ?</div>
-    <div class="faq-answer">Explication...</div>
-  </div>
+        <div class="form-container">
+            <form id="archetype-form">
+                <!-- Étape 1 - Introduction & Confiance -->
+                <div class="form-step active" id="step-1">
+                    <h1 id="dynamic-title">Découvrez l'archétype de votre enfant</h1>
+                    <p>Identifiez son profil et retrouvez l'accompagnement sur-mesure pour qu'il excelle dans ses études.</p>
+                    
+                    <div class="illustration fade-in" style="text-align: center; margin: 30px 0;">
+                        <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="100" cy="100" r="80" fill="#F5F5F5"/>
+                            <path d="M100 50C83.4315 50 70 63.4315 70 80C70 96.5685 83.4315 110 100 110C116.569 110 130 96.5685 130 80C130 63.4315 116.569 50 100 50Z" fill="#0055A4"/>
+                            <path d="M155 160C155 132.386 130.614 110 100 110C69.3857 110 45 132.386 45 160" stroke="#FFA500" stroke-width="8" stroke-linecap="round"/>
+                            <path d="M77 75C77 75 85 85 100 85C115 85 123 75 123 75" stroke="#FFA500" stroke-width="3" stroke-linecap="round"/>
+                            <circle cx="85" cy="65" r="5" fill="#FFA500"/>
+                            <circle cx="115" cy="65" r="5" fill="#FFA500"/>
+                        </svg>
+                    </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const steps = [...document.querySelectorAll('.form-step')];
-      let current = 0;
-      const progressBar = document.getElementById('progress-bar');
-      const progressInfo = document.getElementById('progress-info');
-      const form = document.getElementById('archetype-form');
-      const webhook = 'https://hooks.airtable.com/workflows/v1/genericWebhook/appJ34INj8TdrYu22/wflCnHSeM0hhnMRFJ/wtr3EvRbAwKPJnegg';
+                    <div class="btn-container">
+                        <div></div> <!-- Div vide pour maintenir l'espacement -->
+                        <button type="button" class="btn btn-primary" id="next-1">Commencer</button>
+                    </div>
 
-      function updateWizard() {
-        steps.forEach((s, i) => s.classList.toggle('active', i === current));
-        const pct = (current / (steps.length - 1)) * 100;
-        progressBar.style.width = pct + '%';
-        progressInfo.textContent = Math.round(pct) + '%';
-        window.scrollTo(0, 0);
+                    <div class="testimonials">
+                        <div class="testimonial-carousel">
+                            <div class="testimonial-slide active">
+                                <p class="testimonial-content">"Grâce au profil détaillé de Lucas, nous avons pu choisir un tuteur qui s'adapte parfaitement à sa façon d'apprendre. Ses notes ont progressé de 4 points en mathématiques en seulement 2 mois !"</p>
+                                <p class="testimonial-author">Marie P., maman de Lucas (15 ans)</p>
+                            </div>
+                            <div class="testimonial-slide">
+                                <p class="testimonial-content">"Le questionnaire nous a permis de découvrir que Chloé a un profil 'Visionnaire Créatif'. Nous avons adapté notre approche à ses besoins spécifiques et elle a retrouvé sa motivation."</p>
+                                <p class="testimonial-author">Thomas L., papa de Chloé (12 ans)</p>
+                            </div>
+                            <div class="testimonial-slide">
+                                <p class="testimonial-content">"J'étais sceptique au départ, mais les résultats étaient étonnamment précis ! Merci pour ces conseils sur mesure qui ont transformé la scolarité de mon fils."</p>
+                                <p class="testimonial-author">Sophie M., maman de Nathan (14 ans)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Étape 2 - Profil de l'enfant -->
+                <div class="form-step" id="step-2">
+                    <h1 class="step-title">Profil de l'enfant</h1>
+                    
+                    <div class="form-group">
+                        <label for="child-name">Prénom de votre enfant</label>
+                        <input type="text" id="child-name" name="child-name" required>
+                        <div class="error-message" id="child-name-error">Veuillez indiquer le prénom de votre enfant</div>
+                        <span class="validation-icon" id="child-name-valid">✓</span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="child-school-level">Niveau scolaire</label>
+                        <select id="child-school-level" name="child-school-level" required>
+                            <option value="" disabled selected>Sélectionnez un niveau</option>
+                            <option value="primaire-cp">CP</option>
+                            <option value="primaire-ce1">CE1</option>
+                            <option value="primaire-ce2">CE2</option>
+                            <option value="primaire-cm1">CM1</option>
+                            <option value="primaire-cm2">CM2</option>
+                            <option value="college-6">6ème</option>
+                            <option value="college-5">5ème</option>
+                            <option value="college-4">4ème</option>
+                            <option value="college-3">3ème</option>
+                            <option value="lycee-2">2nde</option>
+                            <option value="lycee-1">1ère</option>
+                            <option value="lycee-t">Terminale</option>
+                            <option value="superieur">Études supérieures</option>
+                        </select>
+                        <div class="error-message" id="child-school-level-error">Veuillez sélectionner un niveau scolaire</div>
+                        <span class="validation-icon" id="child-school-level-valid">✓</span>
+                    </div>
+
+                    <div class="btn-container">
+                        <button type="button" class="btn btn-secondary prev-btn" data-step="2">Précédent</button>
+                        <button type="button" class="btn btn-primary" id="next-2">Continuer</button>
+                    </div>
+
+                    <div class="testimonials">
+                        <div class="testimonial-carousel">
+                            <div class="testimonial-slide active">
+                                <p class="testimonial-content">"La précision du profil nous a permis de mieux comprendre les difficultés de Léa et d'adapter son accompagnement. Un vrai changement dans son attitude face au travail !"</p>
+                                <p class="testimonial-author">Julien B., papa de Léa (11 ans)</p>
+                            </div>
+                            <div class="testimonial-slide">
+                                <p class="testimonial-content">"Mon fils avait perdu confiance en lui, mais grâce à l'identification de son archétype et au soutien adapté, il a retrouvé la motivation et l'envie d'apprendre."</p>
+                                <p class="testimonial-author">Carole D., maman d'Antoine (16 ans)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Étape 3 - Points forts & axes de progrès -->
+                <div class="form-step" id="step-3">
+                    <h1 class="step-title">Points forts & axes de progrès</h1>
+                    
+                    <div class="form-group">
+                        <label>Sélectionnez jusqu'à 4 qualités qui caractérisent le mieux <span class="child-name-display"></span></label>
+                        <div class="card-grid" id="strengths-grid">
+                            <div class="selection-card" data-value="Curieux">
+                                <div class="checkmark">✓</div>
+                                <p>Curieux</p>
+                            </div>
+                            <div class="selection-card" data-value="Persévérant">
+                                <div class="checkmark">✓</div>
+                                <p>Persévérant</p>
+                            </div>
+                            <div class="selection-card" data-value="Créatif">
+                                <div class="checkmark">✓</div>
+                                <p>Créatif</p>
+                            </div>
+                            <div class="selection-card" data-value="Organisé">
+                                <div class="checkmark">✓</div>
+                                <p>Organisé</p>
+                            </div>
+                            <div class="selection-card" data-value="Analytique">
+                                <div class="checkmark">✓</div>
+                                <p>Analytique</p>
+                            </div>
+                            <div class="selection-card" data-value="Enthousiaste">
+                                <div class="checkmark">✓</div>
+                                <p>Enthousiaste</p>
+                            </div>
+                            <div class="selection-card" data-value="Calme">
+                                <div class="checkmark">✓</div>
+                                <p>Calme</p>
+                            </div>
+                            <div class="selection-card" data-value="Sociable">
+                                <div class="checkmark">✓</div>
+                                <p>Sociable</p>
+                            </div>
+                        </div>
+                        <p class="limit-text" id="strengths-count">0/4 qualités sélectionnées</p>
+                        <input type="hidden" id="strengths" name="strengths" required>
+                        <div class="error-message" id="strengths-error">Veuillez sélectionner au moins une qualité</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Compétences principales à développer</label>
+                        <div class="card-grid" id="skills-grid">
+                            <div class="selection-card" data-value="Motivation">
+                                <div class="checkmark">✓</div>
+                                <p>Motivation</p>
+                            </div>
+                            <div class="selection-card" data-value="Organisation">
+                                <div class="checkmark">✓</div>
+                                <p>Organisation</p>
+                            </div>
+                            <div class="selection-card" data-value="Concentration">
+                                <div class="checkmark">✓</div>
+                                <p>Concentration</p>
+                            </div>
+                            <div class="selection-card" data-value="Méthode">
+                                <div class="checkmark">✓</div>
+                                <p>Méthode</p>
+                            </div>
+                            <div class="selection-card" data-value="Confiance">
+                                <div class="checkmark">✓</div>
+                                <p>Confiance</p>
+                            </div>
+                        </div>
+                        <input type="hidden" id="skills" name="skills" required>
+                        <div class="error-message" id="skills-error">Veuillez sélectionner au moins une compétence à développer</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Particularités éventuelles</label>
+                        <div class="card-grid" id="particularities-grid">
+                            <div class="selection-card" data-value="Aucune">
+                                <div class="checkmark">✓</div>
+                                <p>Aucune</p>
+                            </div>
+                            <div class="selection-card" data-value="TDAH">
+                                <div class="checkmark">✓</div>
+                                <p>TDAH</p>
+                            </div>
+                            <div class="selection-card" data-value="Dyslexie">
+                                <div class="checkmark">✓</div>
+                                <p>Dyslexie</p>
+                            </div>
+                            <div class="selection-card" data-value="HPI">
+                                <div class="checkmark">✓</div>
+                                <p>HPI</p>
+                            </div>
+                            <div class="selection-card" data-value="Dyscalculie">
+                                <div class="checkmark">✓</div>
+                                <p>Dyscalculie</p>
+                            </div>
+                        </div>
+                        <input type="hidden" id="particularities" name="particularities">
+                    </div>
+
+                    <div class="btn-container">
+                        <button type="button" class="btn btn-secondary prev-btn" data-step="3">Précédent</button>
+                        <button type="button" class="btn btn-primary" id="next-3">Continuer</button>
+                    </div>
+
+                    <div class="testimonials">
+                        <div class="testimonial-carousel">
+                            <div class="testimonial-slide active">
+                                <p class="testimonial-content">"En identifiant précisément les qualités et les points à travailler de Paul, nous avons pu mettre en place un accompagnement vraiment personnalisé. Les résultats sont impressionnants !"</p>
+                                <p class="testimonial-author">Laurence M., maman de Paul (13 ans)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Étape 4 - Habitudes & objectifs -->
+                <div class="form-step" id="step-4">
+                    <h1 class="step-title">Habitudes & objectifs</h1>
+                    
+                    <div class="form-group">
+                        <label>Style d'apprentissage dominant de <span class="child-name-display"></span></label>
+                        <div class="card-grid" id="learning-style-grid">
+                            <div class="selection-card" data-value="Visuel">
+                                <div class="checkmark">✓</div>
+                                <p>Visuel</p>
+                                <small>Apprend par l'observation</small>
+                            </div>
+                            <div class="selection-card" data-value="Auditif">
+                                <div class="checkmark">✓</div>
+                                <p>Auditif</p>
+                                <small>Apprend en écoutant</small>
+                            </div>
+                            <div class="selection-card" data-value="Kinesthésique">
+                                <div class="checkmark">✓</div>
+                                <p>Kinesthésique</p>
+                                <small>Apprend en pratiquant</small>
+                            </div>
+                            <div class="selection-card" data-value="Logique">
+                                <div class="checkmark">✓</div>
+                                <p>Logique</p>
+                                <small>Apprend par le raisonnement</small>
+                            </div>
+                        </div>
+                        <input type="hidden" id="learning-style" name="learning-style" required>
+                        <div class="error-message" id="learning-style-error">Veuillez sélectionner un style d'apprentissage</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Objectif principal</label>
+                        <div class="card-grid" id="objective-grid">
+                            <div class="selection-card" data-value="Améliorer-notes">
+                                <div class="checkmark">✓</div>
+                                <p>Améliorer les notes</p>
+                            </div>
+                            <div class="selection-card" data-value="Préparation-examen">
+                                <div class="checkmark">✓</div>
+                                <p>Préparer un examen</p>
+                            </div>
+                            <div class="selection-card" data-value="Soutien-régulier">
+                                <div class="checkmark">✓</div>
+                                <p>Soutien régulier</p>
+                            </div>
+                            <div class="selection-card" data-value="Rattrapage">
+                                <div class="checkmark">✓</div>
+                                <p>Rattrapage</p>
+                            </div>
+                            <div class="selection-card" data-value="Excellence">
+                                <div class="checkmark">✓</div>
+                                <p>Viser l'excellence</p>
+                            </div>
+                            <div class="selection-card" data-value="Méthodologie">
+                                <div class="checkmark">✓</div>
+                                <p>Améliorer la méthode</p>
+                            </div>
+                        </div>
+                        <input type="hidden" id="objective" name="objective" required>
+                        <div class="error-message" id="objective-error">Veuillez sélectionner un objectif principal</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Disponibilités hebdomadaires pour l'accompagnement</label>
+                        <select id="availability" name="availability" required>
+                            <option value="" disabled selected>Sélectionnez une option</option>
+                            <option value="1h">1 heure par semaine</option>
+                            <option value="2h">2 heures par semaine</option>
+                            <option value="3h">3 heures par semaine</option>
+                            <option value="4h+">4 heures ou plus par semaine</option>
+                            <option value="flexible">Horaires flexibles</option>
+                        </select>
+                        <div class="error-message" id="availability-error">Veuillez sélectionner une disponibilité</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Niveau d'urgence</label>
+                        <div class="card-grid" id="urgency-grid">
+                            <div class="selection-card" data-value="Faible">
+                                <div class="checkmark">✓</div>
+                                <p>Faible</p>
+                                <small>Dans les prochains mois</small>
+                            </div>
+                            <div class="selection-card" data-value="Moyenne">
+                                <div class="checkmark">✓</div>
+                                <p>Moyenne</p>
+                                <small>Dans les prochaines semaines</small>
+                            </div>
+                            <div class="selection-card" data-value="Haute">
+                                <div class="checkmark">✓</div>
+                                <p>Haute</p>
+                                <small>Dès que possible</small>
+                            </div>
+                        </div>
+                        <input type="hidden" id="urgency" name="urgency" required>
+                        <div class="error-message" id="urgency-error">Veuillez sélectionner un niveau d'urgence</div>
+                    </div>
+
+                    <div class="btn-container">
+                        <button type="button" class="btn btn-secondary prev-btn" data-step="4">Précédent</button>
+                        <button type="button" class="btn btn-primary" id="next-4">Continuer</button>
+                    </div>
+
+                    <div class="testimonials">
+                        <div class="testimonial-carousel">
+                            <div class="testimonial-slide active">
+                                <p class="testimonial-content">"L'analyse du style d'apprentissage de ma fille a été une révélation ! Son accompagnement est désormais parfaitement adapté à sa façon d'apprendre, et ses résultats s'améliorent semaine après semaine."</p>
+                                <p class="testimonial-author">Éric L., papa d'Emma (14 ans)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Étape 5 - Contexte parental -->
+                <div class="form-step" id="step-5">
+                    <h1 class="step-title">Contexte parental</h1>
+                    
+                    <div class="form-group">
+                        <label for="parent-comment">Un commentaire à ajouter concernant <span class="child-name-display"></span> ?</label>
+                        <textarea id="parent-comment" name="parent-comment" placeholder="Partagez-nous toute information qui vous semble importante (difficultés particulières, centres d'intérêt, attentes spécifiques...)"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="budget">Budget mensuel envisagé pour l'accompagnement</label>
+                        <select id="budget" name="budget" required>
+                            <option value="" disabled selected>Sélectionnez une option</option>
+                            <option value="100-200">100€ - 200€</option>
+                            <option value="200-300">200€ - 300€</option>
+                            <option value="300-400">300€ - 400€</option>
+                            <option value="400+">Plus de 400€</option>
+                            <option value="autre">À définir selon les besoins</option>
+                        </select>
+                        <div class="error-message" id="budget-error">Veuillez sélectionner un budget</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Zone géographique</label>
+                        <input type="text" id="location" name="location" placeholder="Ville ou code postal" required>
+                        <div class="error-message" id="location-error">Veuillez indiquer votre zone géographique</div>
+                    </div>
+
+                    <div class="btn-container">
+                        <button type="button" class="btn btn-secondary prev-btn" data-step="5">Précédent</button>
+                        <button type="button" class="btn btn-primary" id="next-5">Continuer</button>
+                    </div>
+
+                    <div class="testimonials">
+                        <div class="testimonial-carousel">
+                            <div class="testimonial-slide active">
+                                <p class="testimonial-content">"Nous avons trouvé un accompagnement parfaitement adapté à notre budget et à nos contraintes familiales. Le suivi est d'une qualité remarquable et notre fils progresse à grands pas."</p>
+                                <p class="testimonial-author">Nathalie R., maman de Thomas (12 ans)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Étape 6 - Coordonnées & Résultat -->
+                <div class="form-step" id="step-6">
+                    <h1 class="step-title">Dernière étape</h1>
+                    <p>Nous avons presque terminé ! Laissez-nous vos coordonnées pour recevoir le profil complet de <span class="child-name-display"></span> et notre recommandation d'accompagnement personnalisé.</p>
+                    
+                    <div class="form-group">
+                        <label>Civilité & Prénom</label>
+                        <div style="display: flex; gap: 10px;">
+                            <div style="width: 30%;">
+                                <select id="parent-civility" name="parent-civility" required>
+                                    <option value="" disabled selected>Civilité</option>
+                                    <option value="Mme">Mme</option>
+                                    <option value="M">M</option>
+                                </select>
+                                <div class="error-message" id="parent-civility-error">Veuillez sélectionner une civilité</div>
+                            </div>
+                            <div style="width: 70%;">
+                                <input type="text" id="parent-firstname" name="parent-firstname" placeholder="Votre prénom" required>
+                                <div class="error-message" id="parent-firstname-error">Veuillez indiquer votre prénom</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="parent-phone">Téléphone</label>
+                        <input type="tel" id="parent-phone" name="parent-phone" placeholder="Votre numéro de téléphone" required>
+                        <div class="error-message" id="parent-phone-error">Veuillez indiquer un numéro de téléphone valide</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="parent-email">Email</label>
+                        <input type="email" id="parent-email" name="parent-email" placeholder="Votre adresse email" required>
+                        <div class="error-message" id="parent-email-error">Veuillez indiquer une adresse email valide</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="custom-checkbox">
+                            <input type="checkbox" id="rgpd-consent" name="rgpd-consent" required>
+                            <span class="checkmark-box"></span>
+                            <span class="custom-checkbox-label">
+                                J'accepte que mes données soient traitées par eddmon.fr conformément à la politique de confidentialité pour me proposer un accompagnement adapté. Vous pouvez vous désinscrire à tout moment.
+                            </span>
+                        </label>
+                        <div class="error-message" id="rgpd-consent-error">Veuillez accepter la politique de confidentialité</div>
+                    </div>
+
+                    <div class="btn-container">
+                        <button type="button" class="btn btn-secondary prev-btn" data-step="6">Précédent</button>
+                        <button type="submit" class="btn btn-primary" id="submit-form">Voir le profil & l'accompagnement idéal</button>
+                    </div>
+
+                    <div class="faq-section">
+                        <h3>Questions fréquentes</h3>
+                        <div class="faq-item">
+                            <div class="faq-question">Comment est déterminé l'archétype de mon enfant ?</div>
+                            <div class="faq-answer">
+                                Notre méthode exclusive analyse 12 dimensions clés de la personnalité et des modes d'apprentissage de votre enfant. Nous combinons les données concernant ses qualités, ses compétences à développer, son style d'apprentissage et ses particularités pour déterminer son archétype dominant parmi 8 profils distincts.
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">Combien de temps prend l'analyse du profil ?</div>
+                            <div class="faq-answer">
+                                L'analyse complète et la génération de votre rapport personnalisé prennent environ 24 à 48 heures. Vous recevrez ensuite un email contenant l'archétype de votre enfant et nos recommandations d'accompagnement adaptées à son profil.
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">Est-ce que je m'engage à quelque chose ?</div>
+                            <div class="faq-answer">
+                                Non, cette analyse est entièrement gratuite et sans engagement. Vous recevrez simplement le profil complet de votre enfant et nos recommandations personnalisées. Vous serez ensuite libre de choisir ou non de mettre en place l'accompagnement suggéré.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Popup de confirmation -->
+    <div class="popup-overlay" id="confirmation-popup">
+        <div class="popup-content">
+            <div class="popup-icon">
+                <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="40" cy="40" r="38" stroke="#0055A4" stroke-width="4" class="checkmark-circle"/>
+                    <path d="M25 40L35 50L55 30" stroke="#0055A4" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="checkmark-circle"/>
+                </svg>
+            </div>
+            <h1>Merci pour votre confiance !</h1>
+            <p>Nous analysons actuellement le profil de <span class="child-name-display"></span> et vous enverrons très prochainement son archétype complet ainsi que nos recommandations personnalisées pour l'accompagner vers la réussite.</p>
+            <p style="margin-top: 20px;">Vous recevrez un email à l'adresse <span id="email-display"></span> dans les prochaines 24 à 48 heures.</p>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const steps = Array.from(document.querySelectorAll('.form-step'));
+  let current = 0;
+  const progressBar = document.getElementById('progress-bar');
+  const progressInfo = document.getElementById('progress-info');
+  const form = document.getElementById('archetype-form');
+  const webhookUrl = 'https://hooks.airtable.com/workflows/v1/genericWebhook/appJ34INj8TdrYu22/wflCnHSeM0hhnMRFJ/wtr3EvRbAwKPJnegg';
+
+  // Met à jour wizard + barre de progression
+  function updateWizard() {
+    steps.forEach((step, i) => step.classList.toggle('active', i === current));
+    const pct = (current / (steps.length - 1)) * 100;
+    progressBar.style.width = pct + '%';
+    progressInfo.textContent = Math.round(pct) + '%';
+    window.scrollTo(0, 0);
+  }
+
+  // Affiche / masque les messages d'erreur
+  function showError(id, msg) {
+    const fld = document.getElementById(id);
+    fld.classList.add('input-error');
+    const err = document.getElementById(id + '-error');
+    if (err) {
+      err.textContent = msg;
+      err.style.display = 'block';
+    }
+  }
+  function hideError(id) {
+    const fld = document.getElementById(id);
+    fld.classList.remove('input-error');
+    const err = document.getElementById(id + '-error');
+    if (err) err.style.display = 'none';
+  }
+
+  // Validation par étape
+  function validateStep(idx) {
+    let ok = true;
+    const stepNum = idx + 1;
+    if (stepNum === 2) {
+      const name = document.getElementById('child-name').value.trim();
+      if (!name) { showError('child-name','Indiquez le prénom'); ok = false; }
+      else {
+        hideError('child-name');
+        document.getElementById('dynamic-title').textContent = `Découvrez l'archétype de ${name}`;
+        document.querySelectorAll('.child-name-display').forEach(el => el.textContent = name);
       }
-
-      function validate(stepIdx) {
-        let ok = true;
-        const step = steps[stepIdx];
-        step.querySelectorAll('[required]').forEach(el => {
-          const errorEl = document.getElementById(el.id + '-error');
-          if ((el.type === 'checkbox' && !el.checked) || (el.type !== 'checkbox' && !el.value.trim())) {
-            if (errorEl) errorEl.style.display = 'block';
-            ok = false;
-          } else {
-            if (errorEl) errorEl.style.display = 'none';
-          }
-        });
-        return ok;
-      }
-
-      document.querySelectorAll('button[id^="next-"]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const idx = current + 1;
-          if (current === 0 || validate(idx)) {
-            current = Math.min(idx, steps.length - 1);
-            updateWizard();
-          }
-        });
+      const lvl = document.getElementById('child-school-level').value;
+      if (!lvl) { showError('child-school-level','Sélectionnez un niveau'); ok = false; }
+      else hideError('child-school-level');
+    }
+    if (stepNum === 3) {
+      if (!document.getElementById('strengths').value) { showError('strengths','Sélectionnez au moins 1 qualité'); ok = false; }
+      else hideError('strengths');
+      if (!document.getElementById('skills').value) { showError('skills','Sélectionnez au moins 1 compétence'); ok = false; }
+      else hideError('skills');
+    }
+    if (stepNum === 4) {
+      ['learning-style','objective','availability','urgency'].forEach(id => {
+        if (!document.getElementById(id).value) { showError(id,'Champ requis'); ok = false; }
+        else hideError(id);
       });
-
-      document.querySelectorAll('.prev-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          current = Math.max(current - 1, 0);
-          updateWizard();
-        });
+    }
+    if (stepNum === 5) {
+      ['budget','location'].forEach(id => {
+        const v = document.getElementById(id).value.trim();
+        if (!v) { showError(id,'Champ requis'); ok = false; }
+        else hideError(id);
       });
-
-      document.getElementById('archetype-form').addEventListener('submit', e => {
-        e.preventDefault();
-        if (!validate(steps.length - 1)) return;
-        const data = {};
-        new FormData(form).forEach((v, k) => data[k] = v);
-        fetch(webhook, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(data)
-        }).then(() => alert('Envoyé !')).catch(() => alert('Erreur'));
+    }
+    if (stepNum === 6) {
+      const finalFields = [
+        {id:'parent-civility', msg:'Sélectionnez une civilité'},
+        {id:'parent-firstname', msg:'Indiquez votre prénom'},
+        {id:'parent-phone', msg:'Numéro invalide'},
+        {id:'parent-email', msg:'Email invalide'},
+        {id:'rgpd-consent', msg:'Consentement requis'}
+      ];
+      finalFields.forEach(f => {
+        const el = document.getElementById(f.id);
+        const val = f.id==='rgpd-consent'? el.checked : el.value.trim();
+        if (!val) { showError(f.id, f.msg); ok = false; }
+        else hideError(f.id);
       });
+      if (ok) document.getElementById('email-display').textContent = document.getElementById('parent-email').value.trim();
+    }
+    return ok;
+  }
 
-      document.querySelectorAll('.faq-question').forEach(q => {
-        q.addEventListener('click', () => q.parentElement.classList.toggle('active'));
-      });
-
+  // Boutons “Suivant”
+document.querySelectorAll('button.btn-primary[id^="next-"]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const nextIndex = current + 1;
+    // si on est à l'étape 1 (current===0), on skip la validation
+    if ((current === 0 || validateStep(nextIndex)) && current < steps.length - 1) {
+      current++;
       updateWizard();
+    }
+  });
+});
+
+  // Boutons “Précédent”
+  document.querySelectorAll('button.btn-secondary.prev-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (current > 0) {
+        current--;
+        updateWizard();
+      }
     });
-  </script>
+  });
+
+  // Cartes de sélection
+  function setupSelectionCards(gridId, hiddenId, maxSel = null) {
+    const grid = document.getElementById(gridId);
+    const hidden = document.getElementById(hiddenId);
+    let count = 0;
+    grid.querySelectorAll('.selection-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const val = card.dataset.value;
+        if (maxSel) {
+          if (card.classList.contains('selected')) {
+            card.classList.remove('selected');
+            count--;
+          } else if (count < maxSel) {
+            card.classList.add('selected');
+            count++;
+          }
+        } else {
+          grid.querySelectorAll('.selection-card').forEach(c => c.classList.remove('selected'));
+          card.classList.toggle('selected');
+        }
+        hidden.value = Array.from(grid.querySelectorAll('.selection-card.selected'))
+                           .map(c => c.dataset.value)
+                           .join(',');
+      });
+    });
+  }
+  setupSelectionCards('strengths-grid','strengths',4);
+  setupSelectionCards('skills-grid','skills');
+  setupSelectionCards('particularities-grid','particularities');
+  setupSelectionCards('learning-style-grid','learning-style');
+  setupSelectionCards('objective-grid','objective');
+  setupSelectionCards('urgency-grid','urgency');
+
+  // Soumission + webhook + popup
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (!validateStep(5)) return;
+    const data = {};
+    new FormData(form).forEach((v,k) => data[k] = v);
+    fetch(webhookUrl, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(data)
+    })
+    .then(() => console.log('Envoyé à Airtable'))
+    .catch(console.error);
+    document.querySelector('.container').style.display = 'none';
+    const pop = document.getElementById('confirmation-popup');
+    pop.classList.add('active');
+    setTimeout(() => pop.classList.remove('active'), 3000);
+  });
+
+  // FAQ toggle
+  document.querySelectorAll('.faq-question').forEach(q =>
+    q.addEventListener('click', () => q.parentElement.classList.toggle('active'))
+  );
+
+  updateWizard();
+});
+</script>
+
+
 </body>
 </html>
