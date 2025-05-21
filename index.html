@@ -1051,6 +1051,13 @@
             
             // Initialisation de la barre de progression
             updateProgressBar();
+            console.log('Formulaire initialisé', {
+    form: form,
+    progressBar: progressBar,
+    progressInfo: progressInfo,
+    step1: document.getElementById('step-1'),
+    nextButton: document.getElementById('next-1')
+});
             
             // Fonction pour mettre à jour la barre de progression
             function updateProgressBar() {
@@ -1060,27 +1067,27 @@
             }
             
             // Fonction pour afficher l'étape courante
-            function showStep(stepNumber) {
-                // Masquer toutes les étapes
-                document.querySelectorAll('.form-step').forEach(step => {
-                    step.classList.remove('active');
-                });
-                
-                // Afficher l'étape demandée
-                document.getElementById(`step-${stepNumber}`).classList.add('active');
-                
-                // Mettre à jour la variable d'étape courante
-                currentStep = stepNumber;
-                
-                // Mettre à jour la barre de progression
-                updateProgressBar();
-                
-                // Faire défiler vers le haut
-                window.scrollTo(0, 0);
-                
-                // Mettre à jour les témoignages
-                updateTestimonials();
-            }
+function showStep(stepNumber) {
+    // Masquer toutes les étapes
+    document.querySelectorAll('.form-step').forEach(step => {
+        step.classList.remove('active');
+    });
+    
+    // Afficher l'étape demandée
+    document.getElementById(`step-${stepNumber}`).classList.add('active');
+    
+    // Mettre à jour la variable d'étape courante
+    currentStep = stepNumber;
+    
+    // Mettre à jour la barre de progression
+    updateProgressBar();
+    
+    // Faire défiler vers le haut
+    window.scrollTo(0, 0);
+    
+    // Mettre à jour les témoignages
+    updateTestimonials();
+}
             
             // Fonction pour afficher les erreurs
             function showError(fieldId, message) {
@@ -1268,15 +1275,19 @@
             
             // Gestion des boutons "Suivant"
             for (let i = 1; i <= totalSteps; i++) {
-                const nextButton = document.getElementById(`next-${i}`);
-                if (nextButton) {
-                    nextButton.addEventListener('click', function() {
-                        if (validateStep(i)) {
-                            showStep(i + 1);
-                        }
-                    });
-                }
+    const nextButton = document.getElementById(`next-${i}`);
+    if (nextButton) {
+        nextButton.addEventListener('click', function() {
+            if (validateStep(i)) {
+                showStep(i + 1);
             }
+        });
+    }
+}
+// Ajouter spécifiquement un événement pour le bouton Commencer
+document.getElementById('next-1').addEventListener('click', function() {
+    showStep(2);
+});
             
             // Gestion des boutons "Précédent"
             document.querySelectorAll('.prev-btn').forEach(button => {
