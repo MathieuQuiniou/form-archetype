@@ -1039,13 +1039,16 @@
         </div>
     </div>
 
-   <script>
-document.addEventListener('DOMContentLoaded', () => {
+<script>
+document.addEventListener('DOMContentLoaded', function() {
   const steps = Array.from(document.querySelectorAll('.form-step'));
   let current = 0;
   const progressBar = document.getElementById('progress-bar');
   const progressInfo = document.getElementById('progress-info');
+  const form = document.getElementById('archetype-form');
+  const webhookUrl = 'https://hooks.airtable.com/workflows/v1/genericWebhook/appJ34INj8TdrYu22/wflCnHSeM0hhnMRFJ/wtr3EvRbAwKPJnegg';
 
+  // Met à jour wizard + barre de progression
   function updateWizard() {
     steps.forEach((step, i) => step.classList.toggle('active', i === current));
     const pct = (current / (steps.length - 1)) * 100;
@@ -1054,15 +1057,88 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo(0, 0);
   }
 
+  // Affiche / masque les messages d'erreur
+  function showError(id, msg) {
+    const fld = document.getElementById(id);
+    fld.classList.add('input-error');
+    const err = document.getElementById(id + '-error');
+    if (err) {
+      err.textContent = msg;
+      err.style.display = 'block';
+    }
+  }
+  function hideError(id) {
+    const fld = document.getElementById(id);
+    fld.classList.remove('input-error');
+    const err = document.getElementById(id + '-error');
+    if (err) err.style.display = 'none';
+  }
+
+  // Validation par étape
+  function validateStep(idx) {
+    let ok = true;
+    const stepNum = idx + 1;
+    if (stepNum === 2) {
+      const name = document.getElementById('child-name').value.trim();
+      if (!name) { showError('child-name','Indiquez le prénom'); ok = false; }
+      else {
+        hideError('child-name');
+        document.getElementById('dynamic-title').textContent = `Découvrez l'archétype de ${name}`;
+        document.querySelectorAll('.child-name-display').forEach(el => el.textContent = name);
+      }
+      const lvl = document.getElementById('child-school-level').value;
+      if (!lvl) { showError('child-school-level','Sélectionnez un niveau'); ok = false; }
+      else hideError('child-school-level');
+    }
+    if (stepNum === 3) {
+      if (!document.getElementById('strengths').value) { showError('strengths','Sélectionnez au moins 1 qualité'); ok = false; }
+      else hideError('strengths');
+      if (!document.getElementById('skills').value) { showError('skills','Sélectionnez au moins 1 compétence'); ok = false; }
+      else hideError('skills');
+    }
+    if (stepNum === 4) {
+      ['learning-style','objective','availability','urgency'].forEach(id => {
+        if (!document.getElementById(id).value) { showError(id,'Champ requis'); ok = false; }
+        else hideError(id);
+      });
+    }
+    if (stepNum === 5) {
+      ['budget','location'].forEach(id => {
+        const v = document.getElementById(id).value.trim();
+        if (!v) { showError(id,'Champ requis'); ok = false; }
+        else hideError(id);
+      });
+    }
+    if (stepNum === 6) {
+      const finalFields = [
+        {id:'parent-civility', msg:'Sélectionnez une civilité'},
+        {id:'parent-firstname', msg:'Indiquez votre prénom'},
+        {id:'parent-phone', msg:'Numéro invalide'},
+        {id:'parent-email', msg:'Email invalide'},
+        {id:'rgpd-consent', msg:'Consentement requis'}
+      ];
+      finalFields.forEach(f => {
+        const el = document.getElementById(f.id);
+        const val = f.id==='rgpd-consent'? el.checked : el.value.trim();
+        if (!val) { showError(f.id, f.msg); ok = false; }
+        else hideError(f.id);
+      });
+      if (ok) document.getElementById('email-display').textContent = document.getElementById('parent-email').value.trim();
+    }
+    return ok;
+  }
+
+  // Boutons “Suivant”
   document.querySelectorAll('button.btn-primary[id^="next-"]').forEach(btn => {
     btn.addEventListener('click', () => {
-      if (current < steps.length - 1) {
+      if (validateStep(current + 1) && current < steps.length - 1) {
         current++;
         updateWizard();
       }
     });
   });
 
+  // Boutons “Précédent”
   document.querySelectorAll('button.btn-secondary.prev-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       if (current > 0) {
@@ -1072,9 +1148,67 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Cartes de sélection
+  function setupSelectionCards(gridId, hiddenId, maxSel = null) {
+    const grid = document.getElementById(gridId);
+    const hidden = document.getElementById(hiddenId);
+    let count = 0;
+    grid.querySelectorAll('.selection-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const val = card.dataset.value;
+        if (maxSel) {
+          if (card.classList.contains('selected')) {
+            card.classList.remove('selected');
+            count--;
+          } else if (count < maxSel) {
+            card.classList.add('selected');
+            count++;
+          }
+        } else {
+          grid.querySelectorAll('.selection-card').forEach(c => c.classList.remove('selected'));
+          card.classList.toggle('selected');
+        }
+        hidden.value = Array.from(grid.querySelectorAll('.selection-card.selected'))
+                           .map(c => c.dataset.value)
+                           .join(',');
+      });
+    });
+  }
+  setupSelectionCards('strengths-grid','strengths',4);
+  setupSelectionCards('skills-grid','skills');
+  setupSelectionCards('particularities-grid','particularities');
+  setupSelectionCards('learning-style-grid','learning-style');
+  setupSelectionCards('objective-grid','objective');
+  setupSelectionCards('urgency-grid','urgency');
+
+  // Soumission + webhook + popup
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (!validateStep(5)) return;
+    const data = {};
+    new FormData(form).forEach((v,k) => data[k] = v);
+    fetch(webhookUrl, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(data)
+    })
+    .then(() => console.log('Envoyé à Airtable'))
+    .catch(console.error);
+    document.querySelector('.container').style.display = 'none';
+    const pop = document.getElementById('confirmation-popup');
+    pop.classList.add('active');
+    setTimeout(() => pop.classList.remove('active'), 3000);
+  });
+
+  // FAQ toggle
+  document.querySelectorAll('.faq-question').forEach(q =>
+    q.addEventListener('click', () => q.parentElement.classList.toggle('active'))
+  );
+
   updateWizard();
 });
 </script>
+
 
 </body>
 </html>
